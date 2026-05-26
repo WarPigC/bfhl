@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* Custom design tokens */
+@theme {
+  --color-bg-primary: #0f0f1a;
+  --color-bg-secondary: #1a1a2e;
+  --color-bg-card: #16162a;
+  --color-bg-card-hover: #1e1e3a;
+  --color-bg-modal: #12122480;
+  --color-border: #2a2a4a;
+  --color-border-light: #3a3a5a;
+  --color-text-primary: #e8e8f0;
+  --color-text-secondary: #8888a8;
+  --color-text-muted: #6666888;
+  --color-accent: #6c5ce7;
+  --color-accent-hover: #7c6cf7;
+  --color-accent-glow: #6c5ce740;
+  --color-success: #00d2a0;
+  --color-success-bg: #00d2a015;
+  --color-warning: #ffa726;
+  --color-warning-bg: #ffa72615;
+  --color-error: #ef5350;
+  --color-error-bg: #ef535015;
+  --color-info: #42a5f5;
+  --color-info-bg: #42a5f515;
+  --color-priority-low: #4fc3f7;
+  --color-priority-medium: #ffa726;
+  --color-priority-high: #ef5350;
+  --color-priority-urgent: #d500f9;
+  --color-status-open: #42a5f5;
+  --color-status-in-progress: #ffa726;
+  --color-status-resolved: #66bb6a;
+  --color-status-closed: #78909c;
+}
+
+/* Base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  min-height: 100vh;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-secondary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border-light);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent);
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px var(--color-error), 0 0 10px transparent; }
+  50% { box-shadow: 0 0 10px var(--color-error), 0 0 20px var(--color-error-bg); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
