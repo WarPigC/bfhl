@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import type { CreateTicketData, PriorityType, ApiError } from '../types/ticket';
+import { useState } from 'react';
+import type { CreateTicketData, PriorityType } from '../types/ticket';
 import { PRIORITY_LABELS } from '../types/ticket';
 
 interface CreateTicketModalProps {

@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import { useState, useCallback } from 'react';
+import {
+  DndContext,
+  DragOverlay,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  closestCenter,
+} from '@dnd-kit/core';
+import type { DragStartEvent, DragEndEvent, DragOverEvent } from '@dnd-kit/core';
 import { useTickets } from './hooks/useTickets';
 import { useToast } from './hooks/useToast';
 import { StatsStrip } from './components/StatsStrip';
 import { FilterBar } from './components/FilterBar';
-import { BoardColumn } from './components/BoardColumn';
+import { DroppableBoardColumn } from './components/DroppableBoardColumn';
 import { CreateTicketModal } from './components/CreateTicketModal';
 import { ToastContainer } from './components/ToastContainer';
-import type { StatusType, PriorityType } from './types/ticket';
+import { TicketCard } from './components/TicketCard';
+import type { StatusType, Ticket } from './types/ticket';
+import { ALLOWED_TRANSITIONS, STATUS_LABELS } from './types/ticket';
 
 const COLUMNS: StatusType[] = ['open', 'in_progress', 'resolved', 'closed'];
 
@@ -25,10 +36,80 @@ function App() {
 
   const { toasts, addToast } = useToast();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [activeTicket, setActiveTicket] = useState<Ticket | null>(null);
+  const [overColumn, setOverColumn] = useState<StatusType | null>(null);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    })
+  );
+
+  const isValidDrop = useCallback(
+    (ticketStatus: StatusType, targetColumn: StatusType): boolean => {
+      if (ticketStatus === targetColumn) return true;
+      const allowed = ALLOWED_TRANSITIONS[ticketStatus];
+      return allowed?.includes(targetColumn) ?? false;
+    },
+    []
+  );
+
+  const handleDragStart = useCallback((event: DragStartEvent) => {
+    const ticket = event.active.data.current?.ticket as Ticket | undefined;
+    if (ticket) {
+      setActiveTicket(ticket);
+    }
+  }, []);
+
+  const handleDragOver = useCallback((event: DragOverEvent) => {
+    const overId = event.over?.id as StatusType | undefined;
+    setOverColumn(overId ?? null);
+  }, []);
+
+  const handleDragEnd = useCallback(
+    async (event: DragEndEvent) => {
+      const { active, over } = event;
+      setActiveTicket(null);
+      setOverColumn(null);
+
+      if (!over) return;
+
+      const ticket = active.data.current?.ticket as Ticket;
+      const targetStatus = over.id as StatusType;
+
+      if (!ticket || ticket.status === targetStatus) return;
+
+      if (!isValidDrop(ticket.status as StatusType, targetStatus)) {
+        addToast(
+          `Cannot move from "${STATUS_LABELS[ticket.status as StatusType]}" to "${STATUS_LABELS[targetStatus]}"`,
+          'error'
+        );
+        return;
+      }
+
+      try {
+        await updateStatus(ticket._id, targetStatus);
+        addToast(
+          `Ticket moved to ${STATUS_LABELS[targetStatus]}`,
+          'success'
+        );
+      } catch (err: any) {
+        addToast(err.error || 'Failed to update ticket', 'error');
+      }
+    },
+    [isValidDrop, updateStatus, addToast]
+  );
 
   const handleError = (message: string) => {
     addToast(message, 'error');
   };
+
+  const isInvalidDropTarget =
+    activeTicket && overColumn
+      ? !isValidDrop(activeTicket.status as StatusType, overColumn)
+      : false;
 
   return (
     <div className="min-h-screen p-4 md:p-6 lg:p-8">
@@ -79,22 +160,47 @@ function App() {
         </div>
       )}
 
-      {/* Board */}
-      <div
-        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"
-        id="ticket-board"
+      {/* Board with DnD */}
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
       >
-        {COLUMNS.map((status) => (
-          <BoardColumn
-            key={status}
-            status={status}
-            tickets={getTicketsByStatus(status)}
-            onUpdateStatus={updateStatus}
-            onDelete={deleteTicket}
-            onError={handleError}
-          />
-        ))}
-      </div>
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4"
+          id="ticket-board"
+        >
+          {COLUMNS.map((status) => (
+            <DroppableBoardColumn
+              key={status}
+              status={status}
+              tickets={getTicketsByStatus(status)}
+              onUpdateStatus={updateStatus}
+              onDelete={deleteTicket}
+              onError={handleError}
+              isDropTarget={activeTicket !== null}
+              isInvalidDrop={overColumn === status && !!isInvalidDropTarget}
+            />
+          ))}
+        </div>
+
+        {/* Drag overlay - shows a ghost of the card being dragged */}
+        <DragOverlay>
+          {activeTicket ? (
+            <div className="opacity-80 w-[280px]">
+              <TicketCard
+                ticket={activeTicket}
+                onUpdateStatus={async () => {}}
+                onDelete={async () => {}}
+                onError={() => {}}
+                isDragging={true}
+              />
+            </div>
+          ) : null}
+        </DragOverlay>
+      </DndContext>
 
       {/* Create Ticket Modal */}
       <CreateTicketModal

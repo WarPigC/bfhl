@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import type {
   Ticket,
   StatusType,
@@ -12,8 +12,8 @@ import {
 
 interface TicketCardProps {
   ticket: Ticket;
-  onUpdateStatus: (id: string, status: StatusType) => Promise<void>;
-  onDelete: (id: string) => Promise<void>;
+  onUpdateStatus: (id: string, status: StatusType) => Promise<unknown>;
+  onDelete: (id: string) => Promise<unknown>;
   onError: (message: string) => void;
   isDragging?: boolean;
 }

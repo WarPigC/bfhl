@@ -1,4 +1,4 @@
-import React from 'react';
+
 import type { PriorityType } from '../types/ticket';
 import { PRIORITY_LABELS } from '../types/ticket';
 
