@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import ticketRoutes from './routes/tickets';
 
 dotenv.config();
 
@@ -16,6 +17,9 @@ app.use(
     credentials: true,
   })
 );
+
+// Routes
+app.use('/tickets', ticketRoutes);
 
 // Health check
 app.get('/health', (_req, res) => {
