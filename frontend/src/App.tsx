@@ -6,7 +6,7 @@ import { FilterBar } from './components/FilterBar';
 import { BoardColumn } from './components/BoardColumn';
 import { CreateTicketModal } from './components/CreateTicketModal';
 import { ToastContainer } from './components/ToastContainer';
-import { StatusType, PriorityType } from './types/ticket';
+import type { StatusType, PriorityType } from './types/ticket';
 
 const COLUMNS: StatusType[] = ['open', 'in_progress', 'resolved', 'closed'];
 

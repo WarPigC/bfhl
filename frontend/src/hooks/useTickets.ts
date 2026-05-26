@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { Ticket, TicketStats, CreateTicketData, StatusType, PriorityType } from '../types/ticket';
+import type { Ticket, TicketStats, CreateTicketData, StatusType, PriorityType } from '../types/ticket';
 import { ticketApi } from '../api/tickets';
 
 export function useTickets() {

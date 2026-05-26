@@ -1,5 +1,5 @@
 import React from 'react';
-import { TicketStats } from '../types/ticket';
+import type { TicketStats } from '../types/ticket';
 
 interface StatsStripProps {
   stats: TicketStats | null;

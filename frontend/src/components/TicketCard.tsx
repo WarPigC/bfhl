@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import {
+import type {
   Ticket,
   StatusType,
   PriorityType,
+} from '../types/ticket';
+import {
   PRIORITY_LABELS,
   STATUS_LABELS,
   ALLOWED_TRANSITIONS,

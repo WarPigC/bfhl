@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { CreateTicketData, PriorityType, PRIORITY_LABELS, ApiError } from '../types/ticket';
+import type { CreateTicketData, PriorityType, ApiError } from '../types/ticket';
+import { PRIORITY_LABELS } from '../types/ticket';
 
 interface CreateTicketModalProps {
   isOpen: boolean;

@@ -1,4 +1,4 @@
-import { Ticket, CreateTicketData, TicketStats, ApiError } from '../types/ticket';
+import type { Ticket, CreateTicketData, TicketStats, ApiError } from '../types/ticket';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 

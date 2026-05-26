@@ -1,5 +1,6 @@
 import React from 'react';
-import { Ticket, StatusType, STATUS_LABELS } from '../types/ticket';
+import type { Ticket, StatusType } from '../types/ticket';
+import { STATUS_LABELS } from '../types/ticket';
 import { TicketCard } from './TicketCard';
 
 interface BoardColumnProps {
