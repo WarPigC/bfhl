@@ -24,7 +24,11 @@ app.use(
 // Routes
 app.use('/tickets', ticketRoutes);
 
-// Health check
+// Health check and Root route
+app.get('/', (_req, res) => {
+  res.send('DeskFlow API is running. Access /tickets for the endpoints.');
+});
+
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
